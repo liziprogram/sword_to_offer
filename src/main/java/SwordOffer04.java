@@ -11,20 +11,24 @@ public class SwordOffer04 {
         int targetTrue = 5;
         int targetFalse = 20;
         //暴力遍历
-        System.out.println(findNumberIn2DArrayA(matrix, targetTrue));
-        System.out.println(findNumberIn2DArrayA(matrix, targetFalse));
+        System.out.println(findNumberIn2DArrayDirect(matrix, targetTrue));
+        System.out.println(findNumberIn2DArrayDirect(matrix, targetFalse));
         //二分算法
-
+        System.out.println(findNumberIn2DArrayBinarySearch(matrix, targetTrue));
+        System.out.println(findNumberIn2DArrayBinarySearch(matrix, targetFalse));
+        //有序对比搜索
+        System.out.println(findNumberIn2DArraySortedSearch(matrix, targetTrue));
+        System.out.println(findNumberIn2DArraySortedSearch(matrix, targetFalse));
     }
 
     /**
-     * 暴力遍历，时间复杂度n*m
+     * 解法一：暴力遍历，时间复杂度n*m
      *
      * @param matrix 二维数组
      * @param target 目标值
      * @return 目标值是否在二维数据中；true：是。false：否
      */
-    public static boolean findNumberIn2DArrayA(int[][] matrix, int target) {
+    public static boolean findNumberIn2DArrayDirect(int[][] matrix, int target) {
         if (matrix == null || matrix.length == 0) {
             return false;
         }
@@ -38,8 +42,60 @@ public class SwordOffer04 {
         return false;
     }
 
-    public static boolean findNumberIn2DArray(int[][] matrix, int target) {
-        
+    /**
+     * 解法二：每行二分查找，时间复杂度，N*logM
+     *
+     * @param matrix 二维数组
+     * @param target 目标值
+     * @return 目标值是否在二维数据中；true：是。false：否
+     */
+    public static boolean findNumberIn2DArrayBinarySearch(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0) {
+            return false;
+        }
+        for (int[] ints : matrix) {
+            int start = 0;
+            int end = ints.length - 1;
+            while (start <= end) {
+                int mid = start + (end - start) / 2;
+                if (ints[mid] > target) {
+                    end = mid - 1;
+                } else if (ints[mid] < target) {
+                    start = mid + 1;
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 解法三：利用二维数组从左到右，从上往下有序的特征，从数组左下角开始搜索。
+     * 从左下角开始遍历，当值小于 target 值时，向右搜索；大于 target 值时，向上搜索。
+     * 时间复杂度:O(m+n).
+     *
+     * @param matrix 二维数组
+     * @param target 目标值
+     * @return 目标值是否在二维数据中；true：是。false：否
+     */
+    public static boolean findNumberIn2DArraySortedSearch(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0) {
+            return false;
+        }
+        int m = matrix.length; //数组有m行
+        int n = matrix[0].length; //数组有n列
+        int rows = m - 1;
+        int col = 0;
+        while (rows >= 0 && col < n) {
+            if (matrix[rows][col] < target) {
+                col++;
+            } else if (matrix[rows][col] > target) {
+                rows--;
+            } else {
+                return true;
+            }
+        }
         return false;
     }
 
